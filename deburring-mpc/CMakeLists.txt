@@ -24,7 +24,7 @@ if(NOT EXISTS "${CMAKE_SOURCE_DIR}/../cmake/base.cmake")
     include(FetchContent)
     FetchContent_Declare(
       "jrl-cmakemodules"
-      GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
+      GIT_REPOSITORY "https://github.com/nim65s/jrl-cmakemodules.git")
     FetchContent_MakeAvailable("jrl-cmakemodules")
     FetchContent_GetProperties("jrl-cmakemodules" SOURCE_DIR JRL_CMAKE_MODULES)
   endif()

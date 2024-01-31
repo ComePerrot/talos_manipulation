@@ -5,12 +5,12 @@ void OCP::defineFeetContact(Contact &contact_collector) {
   boost::shared_ptr<crocoddyl::ContactModelAbstract> contact_model_left =
       boost::make_shared<crocoddyl::ContactModel6D>(
           state_, designer_.get_lf_id(), designer_.get_lf_frame(),
-          pinocchio::LOCAL, actuation_->get_nu(), Eigen::Vector2d(0., 4.));
+          actuation_->get_nu(), Eigen::Vector2d(0., 4.));
 
   boost::shared_ptr<crocoddyl::ContactModelAbstract> contact_model_right =
       boost::make_shared<crocoddyl::ContactModel6D>(
           state_, designer_.get_rf_id(), designer_.get_rf_frame(),
-          pinocchio::LOCAL, actuation_->get_nu(), Vector2d(0., 4.));
+          actuation_->get_nu(), Vector2d(0., 4.));
 
   contact_collector->addContact(designer_.get_lf_name(), contact_model_left,
                                 false);
