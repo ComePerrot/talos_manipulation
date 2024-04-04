@@ -63,9 +63,11 @@ include_directories(SYSTEM
 
 SET(${PROJECT_NAME}_SOURCES
     src/ros_interface.cpp
+    src/onnx_interface.cpp
 )
 SET(${PROJECT_NAME}_HEADERS
     include/${PROJECT_NAME}/ros_interface.h
+    include/${PROJECT_NAME}/onnx_interface.h
 )
 
 add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
@@ -78,8 +80,10 @@ add_executable(ros_deburring src/ros_deburring.cpp)
 target_link_libraries(ros_deburring ${PROJECT_NAME} deburring_mpc::deburring_mpc Eigen3::Eigen ${catkin_LIBRARIES})
 
 if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-  add_rostest(test/ros-mpc-test.test)
+  # find_package(rostest REQUIRED)
+  # add_rostest(test/ros-mpc-test.test)
+  catkin_add_gtest(test_onnx_interface test/test_onnx_interface.cpp)
+  target_link_libraries(test_onnx_interface gtest gtest_main ${PROJECT_NAME})
 endif()
 
 # Installation

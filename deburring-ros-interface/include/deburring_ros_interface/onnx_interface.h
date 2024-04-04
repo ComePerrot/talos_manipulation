@@ -13,6 +13,8 @@ class DeburringONNXInterface {
   void update(const Eigen::VectorXd& x0, const std::vector<Eigen::VectorXd>& X,
               const Eigen::Vector3d& target_pos);
 
+  auto& get_nnOutput() { return nn_output_; }
+
  private:
   void nnCb(const std_msgs::Float64MultiArrayConstPtr msg);
 
