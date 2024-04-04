@@ -50,6 +50,10 @@ if(BUILD_PYTHON_INTERFACE)
 endif()
 add_project_dependency(crocoddyl REQUIRED)
 add_project_dependency(yaml-cpp REQUIRED)
+if(BUILD_WITH_MULTITHREADS)
+  add_project_dependency(OpenMP REQUIRED)
+endif()
+
 include("${JRL_CMAKE_MODULES}/python.cmake")
 
 SET(${PROJECT_NAME}_HEADERS
@@ -80,6 +84,9 @@ add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_SOURCES}
 target_include_directories(${PROJECT_NAME} PUBLIC $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME} PUBLIC crocoddyl::crocoddyl
                                              yaml-cpp)
+if(BUILD_WITH_MULTITHREADS)
+  target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 
 # Python Bindings
