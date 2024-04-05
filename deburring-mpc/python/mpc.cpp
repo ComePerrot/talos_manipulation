@@ -82,10 +82,10 @@ void exposeMPCClass() {
                          const SE3 &)>(
           "initialize", &MPC::initialize,
           bp::args("self", "q0", "v0", "toolMtarget"))
-      .def<void (MPC::*)(const ConstVectorRef &, const ConstVectorRef &,
-                         const SE3 &)>(
-          "iterate", &MPC::iterate,
-          bp::args("self", "q_current", "v_current", "toolMtarget"))
+    //   .def<void (MPC::*)(const ConstVectorRef &, const ConstVectorRef &,
+    //                      const SE3 &)>(
+    //       "iterate", &MPC::iterate,
+    //       bp::args("self", "q_current", "v_current", "toolMtarget"))
       .def<void (MPC::*)(const VectorXd &, const SE3 &)>(
           "iterate", &MPC::iterate, bp::args("self", "x0", "toolMtarget"))
       .add_property(

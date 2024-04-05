@@ -38,10 +38,10 @@ void MPC::initialize(const ConstVectorRef &q0, const ConstVectorRef &v0,
   initialized_ = true;
 }
 
-void MPC::iterate(const ConstVectorRef &q_current,
-                  const ConstVectorRef &v_current, const SE3 &toolMtarget) {
-  iterate(shapeState(q_current, v_current), toolMtarget);
-}
+// void MPC::iterate(const ConstVectorRef &q_current,
+//                   const ConstVectorRef &v_current, const SE3 &toolMtarget) {
+//   iterate(shapeState(q_current, v_current), toolMtarget);
+// }
 
 void MPC::iterate(const VectorXd &x0, const SE3 &toolMtarget) {
   x0_ = x0;
