@@ -1,5 +1,5 @@
-#ifndef DEBURRING_ROS_INTERFACE
-#define DEBURRING_ROS_INTERFACE
+#ifndef DEBURRING_ONNX_INTERFACE
+#define DEBURRING_ONNX_INTERFACE
 
 #include <linear_feedback_controller_msgs/Sensor.h>
 #include <ros/ros.h>
@@ -37,4 +37,4 @@ class DeburringONNXInterface {
   std_msgs::Float64MultiArray nn_input_msg_;
 };
 
-#endif  // DEBURRING_ROS_INTERFACE
+#endif  // DEBURRING_ONNX_INTERFACE
