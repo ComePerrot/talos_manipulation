@@ -1,12 +1,17 @@
 #include "deburring_ros_interface/onnx_interface.h"
+#include <eigen_conversions/eigen_msg.h>
 
-DeburringONNXInterface::DeburringONNXInterface(ros::NodeHandle nh) {
-  ros::TransportHints hints;
-  hints.tcpNoDelay(true);
+DeburringONNXInterface::DeburringONNXInterface(ros::NodeHandle nh,
+                                               const size_t state_size,
+                                               const size_t horizon_size)
+    : state_size_(state_size), horizon_size_(horizon_size) {
+  x0_ = Eigen::VectorXd::Zero(static_cast<Eigen::Index>(state_size));
+  size_input_vector_ = state_size * 4 + 3;
+  nn_input_vector_.resize(static_cast<Eigen::Index>(size_input_vector_));
 
   // NN action subscriber
-  nn_sub_ = nh.subscribe("/scaled_action", 1, &DeburringONNXInterface::nnCb,
-                         this, hints);
+  nn_sub_ =
+      nh.subscribe("/scaled_action", 1, &DeburringONNXInterface::nnCb, this);
 
   // NN input publisher
   nn_pub_ = nh.advertise<std_msgs::Float64MultiArray>("/nn_input", 1);
@@ -20,26 +25,10 @@ void DeburringONNXInterface::nnCb(
 void DeburringONNXInterface::update(const Eigen::VectorXd& x0,
                                     const std::vector<Eigen::VectorXd>& X,
                                     const Eigen::Vector3d& target_pos) {
-  // Concatenate the input vectors into a single vector
-  int num_vectors = X.size();
-  int num_elements = x0.size() + num_vectors * X[0].size() + target_pos.size();
-  Eigen::VectorXd input_vector(num_elements);
-  input_vector << x0, X[0], X[1], X[2], target_pos;
-
-  // Create a new message to send to the nn_input topic
-  std_msgs::Float64MultiArray nn_input_msg;
-  nn_input_msg.layout.dim.push_back(std_msgs::MultiArrayDimension());
-  nn_input_msg.layout.dim[0].size = num_elements;
-  nn_input_msg.layout.dim[0].stride = num_elements;
-  nn_input_msg.layout.dim[0].label = "input";
-  nn_input_msg.data.resize(num_elements);
-
-  // Copy the concatenated vector into the message data array
-  for (int i = 0; i < num_elements; ++i) {
-    nn_input_msg.data[i] = input_vector[i];
-  }
+  
+  nn_input_vector_ << x0, X[0], X[1], X[2], target_pos;
+  tf::matrixEigenToMsg(nn_input_vector_, nn_input_msg_);
 
   // Publish the nn_input_msg
-  nn_pub_.publish(nn_input_msg);
+  nn_pub_.publish(nn_input_msg_);
 }
-

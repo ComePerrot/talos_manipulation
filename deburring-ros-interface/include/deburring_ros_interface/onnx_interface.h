@@ -9,7 +9,8 @@
 
 class DeburringONNXInterface {
  public:
-  DeburringONNXInterface(ros::NodeHandle nh);
+  DeburringONNXInterface(ros::NodeHandle nh, const size_t state_size,
+                         const size_t horizon_size);
   void update(const Eigen::VectorXd& x0, const std::vector<Eigen::VectorXd>& X,
               const Eigen::Vector3d& target_pos);
 
@@ -18,10 +19,19 @@ class DeburringONNXInterface {
  private:
   void nnCb(const std_msgs::Float64MultiArrayConstPtr msg);
 
+  const size_t state_size_;
+  const size_t horizon_size_;
+
   ros::Subscriber nn_sub_;
   ros::Publisher nn_pub_;
 
+  // prealocated memory
   std_msgs::Float64MultiArray nn_output_;
+
+  size_t size_input_vector_;
+  Eigen::VectorXd x0_;
+  Eigen::VectorXd nn_input_vector_;
+  std_msgs::Float64MultiArray nn_input_msg_;
 };
 
 #endif  // DEBURRING_ROS_INTERFACE

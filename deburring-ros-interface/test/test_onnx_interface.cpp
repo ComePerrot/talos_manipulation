@@ -8,7 +8,7 @@
 // Define a test fixture for the ONNXInterface class
 class ONNXInterfaceTest : public ::testing::Test {
  protected:
-  ONNXInterfaceTest() : onnx_interface_(nh_){};
+  ONNXInterfaceTest() : onnx_interface_(nh_, 57, 101){};
   ros::NodeHandle nh_;
   DeburringONNXInterface onnx_interface_;
 
