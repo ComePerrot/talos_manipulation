@@ -7,6 +7,7 @@
 #include <tf2_ros/transform_listener.h>
 
 #include "deburring_ros_interface/custom_registration_utils.h"
+#include "deburring_ros_interface/onnx_interface.h"
 #include "deburring_ros_interface/ros_interface.h"
 
 deburring::RobotDesigner buildRobotDesigner(ros::NodeHandle nh) {
@@ -142,6 +143,11 @@ int main(int argc, char** argv) {
   // Robot Interface
   DeburringROSInterface Robot = DeburringROSInterface(nh);
 
+  // Neural Network interface
+  DeburringONNXInterface NeuralNet = DeburringONNXInterface(
+      nh, static_cast<size_t>(pin_wrapper.get_x0().size()),
+      MPC.get_OCP().get_horizon_length());
+
   // Initialize MPC
   int use_mocap = MPC.get_settings().use_mocap;
   pinocchio::SE3 toolMtarget;
@@ -182,10 +188,12 @@ int main(int argc, char** argv) {
 
     // Get state from Robot intergace
     x = Robot.get_robotState();
+    NeuralNet.update(x, MPC.get_OCP().get_solver()->get_xs(),
+                     MPC.get_target_frame().translation());
 
     // Solving MPC iteration
     OCP_start_time = ros::Time::now();
-    MPC.iterate(x, toolMtarget);
+    MPC.iterate(x, NeuralNet.getReferenceState(), toolMtarget);
     OCP_end_time = ros::Time::now();
     OCP_solve_time = (OCP_end_time - OCP_start_time).toSec();
 
