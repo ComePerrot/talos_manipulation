@@ -167,19 +167,21 @@ class MPC {
 
   /**
    * @brief Do one iteration of the OCP
-   * 
+   *
    * State of the robot is used to update pinocchio data.
    * The formulation of the OCP is updated.
    * The OCP is solved to provide a new control to the robot.
-   * 
+   *
    * @param x0 Initial state of the robot (position and velocity)
    * @param toolMtarget Position of the target wrt the tool frame
    */
   void iterate(const VectorXd &x0, const SE3 &toolMtarget);
+  void iterate(const VectorXd &x0, const VectorXd &xref,
+               const SE3 &toolMtarget);
 
   /**
    * @brief Do one iteration of the OCP
-   * 
+   *
    * @param q_current Joint position (including state of the base)
    * @param v_current Joint velocity (including state of the base)
    * @param toolMtarget Position of the target wrt the tool frame
@@ -189,7 +191,7 @@ class MPC {
 
   /**
    * @brief Shape the state of the robot according to the OCP definition
-   * 
+   *
    * @param q Joint position (including state of the base)
    * @param v Joint velocity (including state of the base)
    * @return The shaped state vector

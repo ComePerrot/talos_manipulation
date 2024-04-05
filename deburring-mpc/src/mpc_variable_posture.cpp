@@ -2,8 +2,8 @@
 
 namespace deburring {
 
-void MPC::updateOCP_variablePosture(const VectorXd &x_meas) {
-  updatePostureReference(x_meas);
+void MPC::updateOCP_variablePosture(const VectorXd &x_ref) {
+  updatePostureReference(x_ref);
   OCP_.recede();
   // Update posture
   OCP_.changePostureReference(OCP_.get_horizon_length() - 1,

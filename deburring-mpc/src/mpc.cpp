@@ -61,6 +61,24 @@ void MPC::iterate(const VectorXd &x0, const SE3 &toolMtarget) {
   K0_ = OCP_.get_gain();
 }
 
+void MPC::iterate(const VectorXd &x0, const VectorXd &xref, const SE3 &toolMtarget) {
+  x0_ = x0;
+
+  designer_.updateReducedModel(x0_);
+
+  updateTarget(toolMtarget);
+  if (settings_.precision_strategy == 3) {
+    updateOCP_variablePosture(xref);
+  } else {
+    updateOCP();
+  }
+
+  OCP_.solve(x0_);
+
+  u0_ = OCP_.get_torque();
+  K0_ = OCP_.get_gain();
+}
+
 void MPC::setTarget(const SE3 &toolMtarget) {
   // Setup target
   number_holes_ = settings_.holes_offsets.size();
