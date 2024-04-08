@@ -18,11 +18,19 @@ class DeburringONNXInterface {
   std_msgs::Float64MultiArray& get_nnOutput() { return nn_output_; }
 
  private:
+  void setupParameters();
   void nnCb(const std_msgs::Float64MultiArrayConstPtr msg);
 
+  // Parameters
+  //  Observations
   const size_t state_size_;
   const size_t horizon_size_;
-  std::vector<size_t> rl_controlled_ids;
+  std::vector<size_t> observed_state_ids_;
+
+  //  Action
+  std::vector<size_t> rl_controlled_ids_;
+  double action_scale_;
+  Eigen::VectorXd action_amplitude_;
 
   ros::Subscriber nn_sub_;
   ros::Publisher nn_pub_;
