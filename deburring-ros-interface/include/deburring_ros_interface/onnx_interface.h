@@ -19,6 +19,9 @@ class DeburringONNXInterface {
 
  private:
   void setupParameters();
+  void normalizeObservations(const Eigen::VectorXd& x0,
+                             const std::vector<Eigen::VectorXd>& X,
+                             const Eigen::Vector3d& target_pos);
   void nnCb(const std_msgs::Float64MultiArrayConstPtr msg);
 
   // Parameters
@@ -26,6 +29,10 @@ class DeburringONNXInterface {
   const size_t state_size_;
   const size_t horizon_size_;
   std::vector<size_t> observed_state_ids_;
+  Eigen::VectorXd average_state_;
+  Eigen::VectorXd amplitude_state_;
+  Eigen::Vector3d average_target_;
+  Eigen::Vector3d amplitude_target;
 
   //  Action
   std::vector<size_t> rl_controlled_ids_;
