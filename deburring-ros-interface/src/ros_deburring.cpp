@@ -161,6 +161,8 @@ int main(int argc, char** argv) {
   Eigen::VectorXd x = Robot.get_robotState();
   MPC.initialize(x.head(MPC.get_designer().get_rmodel().nq),
                  x.tail(MPC.get_designer().get_rmodel().nv), toolMtarget);
+  NeuralNet.update(x, MPC.get_OCP().get_solver()->get_xs(),
+                   MPC.get_target_frame().translation());
 
   REGISTER_VARIABLE("/introspection_data", "end_effector_actual_position",
                     &MPC.get_designer().get_end_effector_frame().translation(),
