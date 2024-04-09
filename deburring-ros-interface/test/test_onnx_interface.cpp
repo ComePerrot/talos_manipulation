@@ -24,14 +24,14 @@ TEST_F(ONNXInterfaceTest, UpdateTest) {
   // Create some dummy input data
   int state_size = 57;
   int horizon_size = 101;
-  Eigen::VectorXd x0 = Eigen::VectorXd::Zero(state_size);
+  Eigen::VectorXd x0 = Eigen::VectorXd::Constant(state_size, 1.0);
 
   std::vector<Eigen::VectorXd> X;
   for (int i = 0; i < horizon_size; i++) {
-    X.push_back(Eigen::VectorXd::Zero(state_size));
+    X.push_back(Eigen::VectorXd::Constant(state_size, i));
   }
 
-  Eigen::Vector3d target_pos(1.0, 2.0, 3.0);
+  Eigen::Vector3d target_pos(2.0, 2.0, 2.0);
 
   // Call the update method with the dummy input data
   onnx_interface_.update(x0, X, target_pos);

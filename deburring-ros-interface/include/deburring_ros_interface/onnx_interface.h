@@ -19,6 +19,9 @@ class DeburringONNXInterface {
 
  private:
   void setupParameters();
+  void buildInputVector(const Eigen::VectorXd& x0,
+                        const std::vector<Eigen::VectorXd>& X,
+                        const Eigen::Vector3d& target_pos);
   void normalizeObservations(const Eigen::VectorXd& x0,
                              const std::vector<Eigen::VectorXd>& X,
                              const Eigen::Vector3d& target_pos);
