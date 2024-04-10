@@ -43,7 +43,7 @@ void DeburringONNXInterface::setupParameters() {
   // amplitude_target << 0.45, 0.35, 0.7;
 
   //  Action
-  rl_controlled_ids_ = {0, 1, 2};
+  rl_controlled_ids_ = {21, 22, 24};
   action_scale_ = 0.5;
   action_amplitude_.resize(
       static_cast<Eigen::Index>(rl_controlled_ids_.size()));
