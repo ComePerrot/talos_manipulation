@@ -6,5 +6,7 @@
     <param name="urdf" value="$(find example-robot-data)/robots/talos_data/robots/talos_reduced.urdf"/>
     <param name="srdf" value="$(find example-robot-data)/robots/talos_data/srdf/talos.srdf"/>
 
+    <include file="$(find deburring_deep_planner)/launch/deep_planner.launch"/>
+
     <node pkg="deburring_ros_interface" type="ros_deburring" name="ros_deburring" output="screen"/>
 </launch>
