@@ -1,4 +1,5 @@
 <launch>
+    <arg name= "deep_planner" default= "false"/>
 
     <!-- Loading deburring parameter file -->
     <rosparam command="load" file="$(find deburring_ros_interface)/config/settings_ros_deburring.yaml"/>
@@ -6,7 +7,12 @@
     <param name="urdf" value="$(find example-robot-data)/robots/talos_data/robots/talos_reduced.urdf"/>
     <param name="srdf" value="$(find example-robot-data)/robots/talos_data/srdf/talos.srdf"/>
 
-    <include file="$(find deburring_deep_planner)/launch/deep_planner.launch"/>
+    <group if = "$(arg deep_planner)">
+        <include file="$(find deburring_deep_planner)/launch/deep_planner.launch"/>
+    </group>
 
-    <node pkg="deburring_ros_interface" type="ros_deburring" name="ros_deburring" output="screen"/>
+    <node pkg="deburring_ros_interface" type="ros_deburring" name="ros_deburring" output="screen">
+        <param name= "deep_planner"
+             value= "$(arg deep_planner)"/>
+    </node>
 </launch>

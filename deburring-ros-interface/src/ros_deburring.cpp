@@ -144,6 +144,8 @@ int main(int argc, char** argv) {
   DeburringROSInterface Robot = DeburringROSInterface(nh);
 
   // Neural Network interface
+  bool deep_planner;
+  nh.getParam("ros_deburring/deep_planner", deep_planner);
   DeburringONNXInterface NeuralNet = DeburringONNXInterface(
       nh, static_cast<size_t>(pin_wrapper.get_x0().size()),
       MPC.get_OCP().get_horizon_length());
@@ -158,11 +160,14 @@ int main(int argc, char** argv) {
     toolMtarget = pinocchio::SE3::Identity();
   }
 
-  Eigen::VectorXd x = Robot.get_robotState();
-  MPC.initialize(x.head(MPC.get_designer().get_rmodel().nq),
-                 x.tail(MPC.get_designer().get_rmodel().nv), toolMtarget);
-  NeuralNet.update(x, MPC.get_OCP().get_solver()->get_xs(),
-                   MPC.get_target_frame().translation());
+  Eigen::VectorXd x_measured = Robot.get_robotState();
+  MPC.initialize(x_measured.head(MPC.get_designer().get_rmodel().nq),
+                 x_measured.tail(MPC.get_designer().get_rmodel().nv),
+                 toolMtarget);
+  if (deep_planner) {
+    NeuralNet.update(x_measured, MPC.get_OCP().get_solver()->get_xs(),
+                     MPC.get_target_frame().translation());
+  }
 
   REGISTER_VARIABLE("/introspection_data", "end_effector_actual_position",
                     &MPC.get_designer().get_end_effector_frame().translation(),
@@ -177,6 +182,7 @@ int main(int argc, char** argv) {
   REGISTER_VARIABLE("/introspection_data", "OCP_solve_time", &OCP_solve_time,
                     &registered_variables);
 
+  Eigen::VectorXd x_ref;
   Eigen::VectorXd u0;
   Eigen::MatrixXd K0;
   Eigen::VectorXd croco_contact_left_;
@@ -189,13 +195,18 @@ int main(int argc, char** argv) {
     ros::spinOnce();
 
     // Get state from Robot intergace
-    x = Robot.get_robotState();
-    NeuralNet.update(x, MPC.get_OCP().get_solver()->get_xs(),
-                     MPC.get_target_frame().translation());
+    x_measured = Robot.get_robotState();
+    if (deep_planner) {
+      NeuralNet.update(x_measured, MPC.get_OCP().get_solver()->get_xs(),
+                       MPC.get_target_frame().translation());
+      x_ref = NeuralNet.getReferenceState();
+    } else {
+      x_ref = x_measured;
+    }
 
     // Solving MPC iteration
     OCP_start_time = ros::Time::now();
-    MPC.iterate(x, NeuralNet.getReferenceState(), toolMtarget);
+    MPC.iterate(x_measured, x_ref, toolMtarget);
     OCP_end_time = ros::Time::now();
     OCP_solve_time = (OCP_end_time - OCP_start_time).toSec();
 
