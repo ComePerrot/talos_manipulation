@@ -21,6 +21,7 @@ catkin_package(
 )
 
 # Installation
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 install(DIRECTORY launch
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
   FILES_MATCHING PATTERN "*.launch"

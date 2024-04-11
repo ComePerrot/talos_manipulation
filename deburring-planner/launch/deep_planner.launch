@@ -1,3 +1,5 @@
 <launch>
+    <rosparam file="$(find deburring_deep_planner)/config/nn_settings.yaml" command="load" />
+
     <node pkg="deburring_deep_planner" type="nn_node.py" name="deep_planner" output="screen"/>
 </launch>
