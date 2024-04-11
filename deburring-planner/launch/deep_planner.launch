@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="deburring_deep_planner" type="nn_node.py" name="deep_planner" output="screen"/>
+</launch>
