@@ -18,6 +18,15 @@ DeburringONNXInterface::DeburringONNXInterface(ros::NodeHandle nh,
 
   // Neural Network input publisher
   nn_pub_ = nh.advertise<std_msgs::Float64MultiArray>("/nn_input", 1);
+
+  ros::Rate r(1);  // Rate for reading inital state from the robot
+  while (nn_output_.data.empty()) {
+    // No measurments have been received if message time stamp is zero
+    ROS_INFO_STREAM("Waiting for neural network action");
+    ros::spinOnce();
+
+    r.sleep();
+  }
 }
 
 void DeburringONNXInterface::setupParameters() {
