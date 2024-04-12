@@ -111,6 +111,8 @@ void MPC::setTarget(const SE3 &toolMtarget) {
 
   //  Setup list_oMholes
   setHolesPlacement();
+
+  oMtarget_hole_ = list_oMhole_[current_hole_];
 }
 
 void MPC::setHolesPlacement() {
