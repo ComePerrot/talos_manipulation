@@ -75,7 +75,9 @@ void DeburringONNXInterface::update(const Eigen::VectorXd& x0,
 void DeburringONNXInterface::buildInputVector(
     const Eigen::VectorXd& x0, const std::vector<Eigen::VectorXd>& X,
     const Eigen::Vector3d& target_pos) {
-  nn_input_vector_ << x0, target_pos;
+  nn_input_vector_.head(static_cast<Eigen::Index>(state_size_)) = x0;
+  nn_input_vector_.segment(static_cast<Eigen::Index>(state_size_), 3) =
+      target_pos;
 
   for (size_t i = 0; i < observed_state_ids_.size(); ++i) {
     nn_input_vector_.segment(
@@ -84,18 +86,18 @@ void DeburringONNXInterface::buildInputVector(
   }
 }
 
-void DeburringONNXInterface::normalizeObservations(
-    const Eigen::VectorXd& x0, const std::vector<Eigen::VectorXd>& X,
-    const Eigen::Vector3d& target_pos) {
-  nn_input_vector_ << (x0 - average_state_).cwiseQuotient(amplitude_state_);
-  nn_input_vector_
-      << (target_pos - average_target_).cwiseQuotient(amplitude_target);
+// void DeburringONNXInterface::normalizeObservations(
+//     const Eigen::VectorXd& x0, const std::vector<Eigen::VectorXd>& X,
+//     const Eigen::Vector3d& target_pos) {
+//   nn_input_vector_ << (x0 - average_state_).cwiseQuotient(amplitude_state_);
+//   nn_input_vector_
+//       << (target_pos - average_target_).cwiseQuotient(amplitude_target);
 
-  for (const auto& index : observed_state_ids_) {
-    nn_input_vector_
-        << (X[index] - average_state_).cwiseQuotient(amplitude_state_);
-  }
-}
+//   for (const auto& index : observed_state_ids_) {
+//     nn_input_vector_
+//         << (X[index] - average_state_).cwiseQuotient(amplitude_state_);
+//   }
+// }
 
 const Eigen::VectorXd& DeburringONNXInterface::getReferenceState() {
   xref_ << x0_;
