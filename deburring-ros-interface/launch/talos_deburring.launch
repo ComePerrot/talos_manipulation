@@ -1,5 +1,6 @@
 <launch>
     <arg name= "deep_planner" default= "false"/>
+    <arg name= "bag_name" default=""/>
 
     <!-- Loading deburring parameter file -->
     <rosparam command="load" file="$(find deburring_ros_interface)/config/settings_ros_deburring.yaml"/>
@@ -15,4 +16,8 @@
         <param name= "deep_planner"
              value= "$(arg deep_planner)"/>
     </node>
+
+    <group unless = "$(eval arg ('bag_name') == '')">
+        <node pkg="rosbag" type="record" name="rosbag_record_introspection" args="-o $(env PWD)/$(arg bag_name).bag /introspection_data/names /introspection_data/values"/>
+    </group>
 </launch>
