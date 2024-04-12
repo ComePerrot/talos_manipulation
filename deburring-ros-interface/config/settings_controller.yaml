@@ -44,7 +44,7 @@ MPC:
   ]
   backward_offset: 0.05
   precision_threshold: 0.005
-  precision_strategy: 2
+  precision_strategy: 3
   use_mocap: 0
   # use_gain_scheduling: 1
   gain_schedulig_slope: 0.5

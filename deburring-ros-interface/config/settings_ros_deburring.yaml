@@ -31,7 +31,7 @@ controlled_joints:
     arm_right_4_joint,
   ]
 
-custom_limits: True
+custom_limits: False
 lowerPositionLimit: [
     # Base
     -1, -1, -1, -1, -1, -1, -1,
