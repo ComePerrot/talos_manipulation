@@ -10,7 +10,7 @@
 class DeburringONNXInterface {
  public:
   DeburringONNXInterface(ros::NodeHandle nh, const size_t state_size,
-                         const size_t horizon_size);
+                         const size_t horizon_size, bool deep_planner);
   void update(const Eigen::VectorXd& x0, const std::vector<Eigen::VectorXd>& X,
               const Eigen::Vector3d& target_pos);
 

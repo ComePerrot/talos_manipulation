@@ -4,7 +4,8 @@
 
 DeburringONNXInterface::DeburringONNXInterface(ros::NodeHandle nh,
                                                const size_t state_size,
-                                               const size_t horizon_size)
+                                               const size_t horizon_size,
+                                               bool deep_planner)
     : state_size_(state_size), horizon_size_(horizon_size) {
   setupParameters();
   x0_ = Eigen::VectorXd::Zero(static_cast<Eigen::Index>(state_size_));
@@ -19,13 +20,15 @@ DeburringONNXInterface::DeburringONNXInterface(ros::NodeHandle nh,
   // Neural Network input publisher
   nn_pub_ = nh.advertise<std_msgs::Float64MultiArray>("/nn_input", 1);
 
-  ros::Rate r(1);  // Rate for reading inital state from the robot
-  while (nn_output_.data.empty()) {
-    // No measurments have been received if message time stamp is zero
-    ROS_INFO_STREAM("Waiting for neural network action");
-    ros::spinOnce();
+  if (deep_planner) {
+    ros::Rate r(1);  // Rate for reading inital state from the robot
+    while (nn_output_.data.empty()) {
+      // No measurments have been received if message time stamp is zero
+      ROS_INFO_STREAM("Waiting for neural network action");
+      ros::spinOnce();
 
-    r.sleep();
+      r.sleep();
+    }
   }
 }
 

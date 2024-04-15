@@ -82,15 +82,17 @@ deburring::MPC buildMPC(ros::NodeHandle nh,
 
 class MoCapInterface {
  public:
-  MoCapInterface() {
+  MoCapInterface(int use_mocap) {
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>();
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
-    // while (toolMtarget_.isIdentity()) {
-    //   readTF();
-    //   ROS_INFO_THROTTLE(0.5, "Receiving target position from the MOCAP");
-    //   ros::spinOnce();
-    // }
+    if (use_mocap) {
+      while (toolMtarget_.isIdentity()) {
+        readTF();
+        ROS_INFO_THROTTLE(0.5, "Receiving target position from the MOCAP");
+        ros::spinOnce();
+      }
+    }
   }
 
   pinocchio::SE3& get_toolMtarget() {
@@ -138,7 +140,8 @@ int main(int argc, char** argv) {
   deburring::MPC MPC = buildMPC(nh, pin_wrapper);
 
   // Mocap Interface
-  MoCapInterface Mocap = MoCapInterface();
+  int use_mocap = MPC.get_settings().use_mocap;
+  MoCapInterface Mocap = MoCapInterface(use_mocap);
 
   // Robot Interface
   DeburringROSInterface Robot = DeburringROSInterface(nh);
@@ -148,10 +151,10 @@ int main(int argc, char** argv) {
   nh.getParam("ros_deburring/deep_planner", deep_planner);
   DeburringONNXInterface NeuralNet = DeburringONNXInterface(
       nh, static_cast<size_t>(pin_wrapper.get_x0().size()),
-      MPC.get_OCP().get_horizon_length());
+      MPC.get_OCP().get_horizon_length(),
+      deep_planner);
 
   // Initialize MPC
-  int use_mocap = MPC.get_settings().use_mocap;
   pinocchio::SE3 toolMtarget;
 
   if (use_mocap > 0) {
