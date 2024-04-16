@@ -104,7 +104,7 @@ class MoCapInterface {
   void readTF() {
     try {
       transform_stamped_ =
-          tf_buffer_->lookupTransform("target", "tool", ros::Time(0));
+          tf_buffer_->lookupTransform("tool", "target", ros::Time(0));
     } catch (tf2::TransformException& ex) {
       ROS_WARN("%s", ex.what());
     }
