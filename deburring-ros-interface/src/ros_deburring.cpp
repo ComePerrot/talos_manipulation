@@ -151,8 +151,7 @@ int main(int argc, char** argv) {
   nh.getParam("ros_deburring/deep_planner", deep_planner);
   DeburringONNXInterface NeuralNet = DeburringONNXInterface(
       nh, static_cast<size_t>(pin_wrapper.get_x0().size()),
-      MPC.get_OCP().get_horizon_length(),
-      deep_planner);
+      MPC.get_OCP().get_horizon_length(), deep_planner);
 
   // Initialize MPC
   pinocchio::SE3 toolMtarget;
@@ -171,7 +170,6 @@ int main(int argc, char** argv) {
     NeuralNet.update(x_measured, MPC.get_OCP().get_solver()->get_xs(),
                      MPC.get_target_frame().translation());
   }
-
   REGISTER_VARIABLE("/introspection_data", "end_effector_actual_position",
                     &MPC.get_designer().get_end_effector_frame().translation(),
                     &registered_variables);
@@ -184,6 +182,11 @@ int main(int argc, char** argv) {
                     &MPC.get_goal_weight(), &registered_variables);
   REGISTER_VARIABLE("/introspection_data", "OCP_solve_time", &OCP_solve_time,
                     &registered_variables);
+  if (use_mocap > 0) {
+    REGISTER_VARIABLE("/introspection_data", "MoCap_toolMtarget_translation",
+                      &Mocap.get_toolMtarget().translation(),
+                      &registered_variables);
+  }
 
   Eigen::VectorXd x_ref;
   Eigen::VectorXd u0;

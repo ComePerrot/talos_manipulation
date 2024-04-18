@@ -18,6 +18,9 @@
     </node>
 
     <group unless = "$(eval arg ('bag_name') == '')">
-        <node pkg="rosbag" type="record" name="rosbag_record_introspection" args="-o $(env PWD)/$(arg bag_name).bag /introspection_data/names /introspection_data/values"/>
+        <node pkg="rosbag"
+              type="record"
+              name="rosbag_record_introspection"
+              args="-o $(env PWD)/$(arg bag_name).bag /introspection_data/names /introspection_data/values /tf"/>
     </group>
 </launch>
