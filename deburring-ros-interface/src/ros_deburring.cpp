@@ -202,6 +202,9 @@ int main(int argc, char** argv) {
 
     // Get state from Robot intergace
     x_measured = Robot.get_robotState();
+    if (use_mocap == 2) {
+      toolMtarget = Mocap.get_toolMtarget();
+    }
     if (deep_planner) {
       NeuralNet.update(x_measured, MPC.get_OCP().get_solver()->get_xs(),
                        MPC.get_target_frame().translation());
