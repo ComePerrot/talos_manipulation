@@ -61,3 +61,4 @@ upperPositionLimit: [
     1.57, -0.2, 2.44, 0
   ]
 tool_frame_pos: [0, -0.02, -0.0825]
+target_name: "target" # P72 / target

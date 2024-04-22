@@ -82,7 +82,8 @@ deburring::MPC buildMPC(ros::NodeHandle nh,
 
 class MoCapInterface {
  public:
-  MoCapInterface(int use_mocap) {
+  MoCapInterface(int use_mocap, std::string target_name)
+      : target_name_(target_name) {
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>();
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
@@ -104,7 +105,7 @@ class MoCapInterface {
   void readTF() {
     try {
       transform_stamped_ =
-          tf_buffer_->lookupTransform("tool", "target", ros::Time(0));
+          tf_buffer_->lookupTransform("tool", target_name_, ros::Time(0));
     } catch (tf2::TransformException& ex) {
       ROS_WARN("%s", ex.what());
     }
@@ -112,6 +113,8 @@ class MoCapInterface {
     toolMtarget_ = pinocchio::SE3(eigen_transform_.rotation(),
                                   eigen_transform_.translation());
   }
+
+  const std::string target_name_;
 
   // TF variables
   std::shared_ptr<tf2_ros::TransformListener> tf_listener_{nullptr};
@@ -141,7 +144,10 @@ int main(int argc, char** argv) {
 
   // Mocap Interface
   int use_mocap = MPC.get_settings().use_mocap;
-  MoCapInterface Mocap = MoCapInterface(use_mocap);
+  std::string target_name;
+  nh.getParam("target_name", target_name);
+  std::cout << target_name << std::endl;
+  MoCapInterface Mocap = MoCapInterface(use_mocap, target_name);
 
   // Robot Interface
   DeburringROSInterface Robot = DeburringROSInterface(nh);
